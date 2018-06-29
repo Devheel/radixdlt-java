@@ -55,6 +55,10 @@ public final class PrivateKeyEncrypter {
 
     public static void createEncryptedPrivateKeyFile(String password, String filePath) throws Exception {
         ECKeyPair ecKeyPair = ECKeyPairGenerator.newInstance().generateKeyPair();
+		createEncryptedPrivateKeyFile(ecKeyPair, password, filePath);
+    }
+
+    public static void createEncryptedPrivateKeyFile(ECKeyPair ecKeyPair, String password, String filePath) throws Exception {
         String privateKey = ByteString.of(ecKeyPair.getPrivateKey()).hex();
         byte[] salt = getSalt().getBytes(StandardCharsets.UTF_8);
 
@@ -73,7 +77,7 @@ public final class PrivateKeyEncrypter {
         String strJson = gson.toJson(keystore);
 
         createFile(strJson, filePath);
-    }
+	}
 
     public static byte[] decryptPrivateKeyFile(String password, String filePath) throws Exception {
         Keystore keystore = getKeystore(filePath);
