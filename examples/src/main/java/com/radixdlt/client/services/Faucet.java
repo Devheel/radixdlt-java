@@ -4,8 +4,8 @@ import com.radixdlt.client.assets.Asset;
 import com.radixdlt.client.core.Bootstrap;
 import com.radixdlt.client.core.RadixUniverse;
 import com.radixdlt.client.core.address.RadixAddress;
+import com.radixdlt.client.core.identity.EncryptedRadixIdentity;
 import com.radixdlt.client.core.identity.RadixIdentity;
-import com.radixdlt.client.core.identity.SimpleRadixIdentity;
 import com.radixdlt.client.core.network.AtomSubmissionUpdate;
 import com.radixdlt.client.core.network.AtomSubmissionUpdate.AtomSubmissionState;
 import com.radixdlt.client.messaging.RadixMessage;
@@ -14,7 +14,6 @@ import com.radixdlt.client.wallet.RadixWallet;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map;
@@ -143,9 +142,9 @@ public class Faucet {
 			.subscribe();
 	}
 
-	public static void main(String[] args) throws IOException {
-		if (args.length < 2) {
-			System.out.println("Usage: java com.radixdlt.client.services.Faucet <highgarden|sunstone|winterfell|winterfell_local> <keyfile>");
+	public static void main(String[] args) throws Exception {
+		if (args.length < 3) {
+			System.out.println("Usage: java com.radixdlt.client.services.Faucet <highgarden|sunstone|winterfell|winterfell_local> <keyfile> <password>");
 			System.exit(-1);
 		}
 
@@ -156,7 +155,7 @@ public class Faucet {
 			.getStatusUpdates()
 			.subscribe(System.out::println);
 
-		final RadixIdentity faucetIdentity = new SimpleRadixIdentity(args[1]);
+		final RadixIdentity faucetIdentity = new EncryptedRadixIdentity(args[2], args[1]);
 		Faucet faucet = new Faucet(faucetIdentity);
 		faucet.run();
 	}

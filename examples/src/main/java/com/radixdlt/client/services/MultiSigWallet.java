@@ -13,14 +13,13 @@ import com.radixdlt.client.core.address.RadixAddress;
 import com.radixdlt.client.core.atoms.IdParticle;
 import com.radixdlt.client.core.atoms.RadixHash;
 import com.radixdlt.client.core.crypto.ECPublicKey;
+import com.radixdlt.client.core.identity.EncryptedRadixIdentity;
 import com.radixdlt.client.core.identity.RadixIdentity;
-import com.radixdlt.client.core.identity.SimpleRadixIdentity;
 import com.radixdlt.client.messaging.RadixMessage;
 import com.radixdlt.client.messaging.RadixMessaging;
 import com.radixdlt.client.wallet.RadixWallet;
 import io.reactivex.Observable;
 import io.reactivex.observables.ConnectableObservable;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class MultiSigWallet {
@@ -128,10 +127,13 @@ public class MultiSigWallet {
 		;
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 
-		if (args.length < 2) {
-			System.out.println("Usage: java com.radixdlt.client.services.MultiSig <highgarden|sunstone|winterfell|winterfell_local> <keyfile>");
+		if (args.length < 5) {
+			System.out.println(
+				"Usage: java com.radixdlt.client.services.MultiSig"
+					+ " <highgarden|sunstone|winterfell|winterfell_local>"
+					+ " <keyfile> <password> <address1> <address2>");
 			System.exit(-1);
 		}
 
@@ -142,11 +144,13 @@ public class MultiSigWallet {
 			.getStatusUpdates()
 			.subscribe(System.out::println);
 
-		final RadixIdentity multiSigIdentity = new SimpleRadixIdentity(args[1]);
-		final RadixIdentity person1 = new SimpleRadixIdentity("1.key");
-		final RadixIdentity person2 = new SimpleRadixIdentity("2.key");
+		final RadixIdentity multiSigIdentity = new EncryptedRadixIdentity(args[2], args[1]);
 
-		MultiSigWallet multiSigWallet = new MultiSigWallet(multiSigIdentity, person1.getPublicKey(), person2.getPublicKey());
+		MultiSigWallet multiSigWallet = new MultiSigWallet(
+			multiSigIdentity,
+			RadixAddress.fromString(args[3]).getPublicKey(),
+			RadixAddress.fromString(args[4]).getPublicKey()
+		);
 		multiSigWallet.run();
 	}
 }

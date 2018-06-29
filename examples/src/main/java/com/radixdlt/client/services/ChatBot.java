@@ -3,8 +3,8 @@ package com.radixdlt.client.services;
 import com.radixdlt.client.core.Bootstrap;
 import com.radixdlt.client.core.RadixUniverse;
 import com.radixdlt.client.core.address.RadixAddress;
+import com.radixdlt.client.core.identity.OneTimeUseIdentity;
 import com.radixdlt.client.core.identity.RadixIdentity;
-import com.radixdlt.client.core.identity.SimpleRadixIdentity;
 import com.radixdlt.client.core.network.AtomSubmissionUpdate;
 import com.radixdlt.client.messaging.RadixMessage;
 import com.radixdlt.client.messaging.RadixMessaging;
@@ -74,7 +74,7 @@ public class ChatBot {
 			.subscribe(System.out::println);
 
 		// Setup Identity of Chatbot
-		RadixIdentity radixIdentity = new SimpleRadixIdentity("chatbot.key");
+		RadixIdentity radixIdentity = new OneTimeUseIdentity();
 
 		ChatBot chatBot = new ChatBot(radixIdentity, () -> new Function<String, String>() {
 			int messageCount = 0;

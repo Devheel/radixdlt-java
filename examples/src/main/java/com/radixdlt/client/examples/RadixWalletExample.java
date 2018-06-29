@@ -4,8 +4,8 @@ import com.radixdlt.client.assets.Asset;
 import com.radixdlt.client.core.Bootstrap;
 import com.radixdlt.client.core.RadixUniverse;
 import com.radixdlt.client.core.address.RadixAddress;
+import com.radixdlt.client.core.identity.EncryptedRadixIdentity;
 import com.radixdlt.client.core.identity.RadixIdentity;
-import com.radixdlt.client.core.identity.SimpleRadixIdentity;
 import com.radixdlt.client.wallet.RadixWallet;
 
 public class RadixWalletExample {
@@ -27,18 +27,14 @@ public class RadixWalletExample {
 			.getStatusUpdates()
 			.subscribe(System.out::println);
 
-		// Identity Manager which manages user's keys, signing, encrypting and decrypting
-		final RadixIdentity radixIdentity;
-		if (args.length > 0) {
-			if (args[0].equals("-system")) {
-				radixIdentity = RadixUniverse.getInstance().getSystemIdentity()
-					.orElseThrow(() -> new IllegalStateException("System key not present"));
-			} else {
-				radixIdentity = new SimpleRadixIdentity(args[0]);
-			}
-		} else {
-			radixIdentity = new SimpleRadixIdentity();
+		if (args.length < 2) {
+			System.out.println("Usage: java com.radixdlt.client.examples.RadixWalletExample <encryptedkeyfile> <password>");
+			System.exit(-1);
 		}
+
+		// Identity Manager which manages user's keys, signing, encrypting and decrypting
+		final RadixIdentity radixIdentity = new EncryptedRadixIdentity(args[1], args[0]);
+
 		RadixAddress myAddress = RadixUniverse.getInstance().getAddressFrom(radixIdentity.getPublicKey());
 
 		// Print out all past and future transactions

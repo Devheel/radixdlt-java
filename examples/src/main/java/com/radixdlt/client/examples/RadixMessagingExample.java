@@ -3,8 +3,8 @@ package com.radixdlt.client.examples;
 import com.radixdlt.client.core.Bootstrap;
 import com.radixdlt.client.core.RadixUniverse;
 import com.radixdlt.client.core.address.RadixAddress;
+import com.radixdlt.client.core.identity.OneTimeUseIdentity;
 import com.radixdlt.client.core.identity.RadixIdentity;
-import com.radixdlt.client.core.identity.SimpleRadixIdentity;
 import com.radixdlt.client.messaging.RadixMessaging;
 
 public class RadixMessagingExample {
@@ -29,7 +29,7 @@ public class RadixMessagingExample {
 			.subscribe(System.out::println);
 
 		// Identity Manager which manages user's keys, signing, encrypting and decrypting
-		RadixIdentity radixIdentity = new SimpleRadixIdentity();
+		RadixIdentity radixIdentity = new OneTimeUseIdentity();
 
 		// Addresses
 		RadixAddress toAddress = RadixAddress.fromString(TO_ADDRESS_BASE58);
