@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'maven'
     id 'jacoco'
+    id 'findbugs'
     id 'org.sonarqube' version '2.6'
 }
 
@@ -15,6 +16,29 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.7.22'
+}
+
+findbugs {
+    toolVersion '3.0.1'
+    ignoreFailures true
+    showProgress true
+}
+// we need this to get the logs to stdout when running travis
+task analyseFindbugsReport << {
+    tasks.withType(FindBugs) {
+        def report = reports.emacs.destination
+        if (report.exists() && !report.text.trim().isEmpty()) {
+            logger.warn('{}', report.text)
+            throw new GradleException('Findbugs violations detected')
+        }
+    }
+}
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled false
+        emacs.enabled = true
+    }
+    finalizedBy analyseFindbugsReport
 }
 
 jar {
